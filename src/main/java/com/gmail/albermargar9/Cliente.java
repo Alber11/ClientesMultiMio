@@ -7,6 +7,7 @@ public class Cliente {
     private String id;
     private String nombreEmpresa;
     private String nombreContacto;
+    private String ciudad;
     private String pais;
     private double facturacion;
 
@@ -15,13 +16,15 @@ public class Cliente {
      * @param id Identificador del cliente.
      * @param nombreEmpresa Nombre de la empresa.
      * @param nombreContacto Nombre del contacto.
+     * @param ciudad Ciudad de origen.
      * @param pais País de origen.
      * @param facturacion Total de facturación.
      */
-    public Cliente(String id, String nombreEmpresa, String nombreContacto, String pais, double facturacion) {
+    public Cliente(String id, String nombreEmpresa, String nombreContacto, String ciudad, String pais, double facturacion) {
         this.id = id;
         this.nombreEmpresa = nombreEmpresa;
         this.nombreContacto = nombreContacto;
+        this.ciudad = ciudad;
         this.pais = pais;
         this.facturacion = facturacion;
     }
@@ -32,7 +35,7 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return String.format("Cliente [ID=%s, Empresa=%s, Contacto=%s, País=%s, Facturación=%.2f]",
-                id, nombreEmpresa, nombreContacto, pais, facturacion);
+        return String.format("Cliente [ID=%s, Empresa=%s, Contacto=%s, Ciudad=%s, País=%s, Facturación=%.2f]",
+                id, nombreEmpresa, nombreContacto, ciudad, pais, facturacion);
     }
 }

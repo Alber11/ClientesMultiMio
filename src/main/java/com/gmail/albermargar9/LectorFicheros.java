@@ -22,26 +22,88 @@ public class LectorFicheros {
         return new BufferedReader(new FileReader(ruta));
     }
 
+    private static Cliente parseLinea(String linea) {
+        if (linea == null || linea.trim().isEmpty()) {
+            return null;
+        }
+        String[] datos = linea.split(";");
+        if (datos.length >= 11) { // Asegurarse de que hay suficientes columnas
+            try {
+                // Reemplazar la coma decimal por un punto
+                String facturacionStr = datos[4].replace(',', '.');
+                double facturacion = Double.parseDouble(facturacionStr);
+                String ciudad = datos[6];
+                String pais = datos[10];
+                return new Cliente(datos[0], datos[1], datos[2], ciudad, pais, facturacion);
+            } catch (NumberFormatException e) {
+                System.err.println("Error parseando facturación en línea: " + linea);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Lee el archivo utilizando Scanner y parsea los clientes.
+     * @param ruta Ruta del archivo a leer.
+     * @return Lista de clientes generada.
+     */
+    public static List<Cliente> cargarClientesConScanner(String ruta) {
+        List<Cliente> clientes = new ArrayList<>();
+        try (Scanner scanner = lectorFicheroScanner(ruta)) {
+            while (scanner.hasNextLine()) {
+                Cliente cliente = parseLinea(scanner.nextLine());
+                if (cliente != null) {
+                    clientes.add(cliente);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("No se encontró el fichero: " + ruta);
+        }
+        return clientes;
+    }
+
+    /**
+     * Lee el archivo utilizando FileReader y parsea los clientes.
+     * @param ruta Ruta del archivo a leer.
+     * @return Lista de clientes generada.
+     */
+    public static List<Cliente> cargarClientesConFileReader(String ruta) {
+        List<Cliente> clientes = new ArrayList<>();
+        File file = new File(ruta);
+        if (!file.exists()) {
+            System.err.println("No se encontró el fichero: " + ruta);
+            return clientes;
+        }
+        try (FileReader fr = lectorFicheroFilereader(ruta)) {
+            char[] buffer = new char[(int) file.length()];
+            int charsRead = fr.read(buffer);
+            String fileContent = new String(buffer, 0, charsRead);
+            String[] lineas = fileContent.split("\\r?\\n");
+            for (String linea : lineas) {
+                Cliente cliente = parseLinea(linea);
+                if (cliente != null) {
+                    clientes.add(cliente);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error de lectura: " + e.getMessage());
+        }
+        return clientes;
+    }
+
     /**
      * Lee el archivo utilizando BufferedReader y parsea los clientes.
      * @param ruta Ruta del archivo a leer.
      * @return Lista de clientes generada.
      */
-    public static List<Cliente> cargarClientes(String ruta) {
+    public static List<Cliente> cargarClientesConBufferedReader(String ruta) {
         List<Cliente> clientes = new ArrayList<>();
-        // Se usa BufferedReader como método principal para delegar la carga por ser el más eficiente leyendo líneas
         try (BufferedReader br = lectorFicheroBufferReader(ruta)) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                // Asumimos un formato separado por comas (Ajustar según tu Clientes_LF.txt)
-                String[] datos = linea.split(";");
-                if (datos.length >= 5) {
-                    try {
-                        double facturacion = Double.parseDouble(datos[4]);
-                        clientes.add(new Cliente(datos[0], datos[1], datos[2], datos[3], facturacion));
-                    } catch (NumberFormatException e) {
-                        System.err.println("Error parseando facturación en línea: " + linea);
-                    }
+                Cliente cliente = parseLinea(linea);
+                if (cliente != null) {
+                    clientes.add(cliente);
                 }
             }
         } catch (FileNotFoundException e) {

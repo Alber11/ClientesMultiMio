@@ -1,5 +1,6 @@
 package com.gmail.albermargar9;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,10 +36,22 @@ public class Main {
 
             switch (opcion) {
                 case "1":
+                    System.out.println("Cargando fichero con Scanner desde: " + rutaFicheroLectura);
+                    listaClientes = LectorFicheros.cargarClientesConScanner(rutaFicheroLectura);
+                    if (!listaClientes.isEmpty()) {
+                        System.out.println("¡Clientes cargados exitosamente (" + listaClientes.size() + ")!");
+                    }
+                    break;
                 case "2":
+                    System.out.println("Cargando fichero con FileReader desde: " + rutaFicheroLectura);
+                    listaClientes = LectorFicheros.cargarClientesConFileReader(rutaFicheroLectura);
+                    if (!listaClientes.isEmpty()) {
+                        System.out.println("¡Clientes cargados exitosamente (" + listaClientes.size() + ")!");
+                    }
+                    break;
                 case "3":
-                    System.out.println("Cargando fichero desde: " + rutaFicheroLectura);
-                    listaClientes = LectorFicheros.cargarClientes(rutaFicheroLectura);
+                    System.out.println("Cargando fichero con BufferedReader desde: " + rutaFicheroLectura);
+                    listaClientes = LectorFicheros.cargarClientesConBufferedReader(rutaFicheroLectura);
                     if (!listaClientes.isEmpty()) {
                         System.out.println("¡Clientes cargados exitosamente (" + listaClientes.size() + ")!");
                     }
@@ -117,17 +130,40 @@ public class Main {
             reporte += cl.toString() + "\n";
         }
 
-        System.out.println(reporte);
-
         if (guardar) {
-            String rutaReporte = config.getValor("file_report");
-            try (PrintWriter pw = new PrintWriter(new FileWriter(rutaReporte))) {
+            File file = getUniqueFilename(config.getValor("file_report"));
+            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
                 pw.println(reporte);
-                System.out.println("--> Informe guardado en: " + rutaReporte);
+                System.out.println("--> Informe guardado en: " + file.getAbsolutePath());
             } catch (IOException e) {
                 System.err.println("Error al guardar el informe: " + e.getMessage());
             }
+        } else {
+            System.out.println(reporte);
         }
+    }
+
+    private static File getUniqueFilename(String baseFilename) {
+        File file = new File(baseFilename);
+        if (!file.exists()) {
+            return file;
+        }
+
+        String name = baseFilename;
+        String extension = "";
+        int dotIndex = baseFilename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            name = baseFilename.substring(0, dotIndex);
+            extension = baseFilename.substring(dotIndex);
+        }
+
+        int count = 1;
+        while (file.exists()) {
+            String newName = name + "(" + count + ")" + extension;
+            file = new File(newName);
+            count++;
+        }
+        return file;
     }
 
     private static void gestionarConfiguracion() {
