@@ -5,7 +5,7 @@ DataClient-Insight es una aplicación de consola desarrollada en Java diseñada 
 ## 🚀 Características
 
 - **Múltiples métodos de lectura:** Implementación de carga de datos mediante `Scanner`, `FileReader` y `BufferedReader`.
-- **Generación de Informes:** Filtrado de clientes (de un archivo txt clientes con informacion) con opciones de ordenación por facturación o nombre de contacto.
+- **Generación de Informes:** Filtrado de clientes (de un archivo txt clientes con informacion) con opciones de ordenación por facturación o nombre de contacto, en este caso solo filtran clientes de España y Alemania.
 - **Configuración Persistente:** Uso de archivos binarios (`.bin`) para guardar las preferencias del usuario, como la ruta por defecto de los datos o el estilo del menú.
 - **Gestión de Salida:** Capacidad para mostrar informes por consola o guardarlos en archivos de texto con nombres únicos para evitar sobrescrituras.
 

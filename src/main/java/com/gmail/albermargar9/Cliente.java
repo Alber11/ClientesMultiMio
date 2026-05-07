@@ -58,6 +58,42 @@ public class Cliente {
     }
 
     /**
+     * Obtiene el identificador único del cliente.
+     *
+     * @return El ID del cliente.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Obtiene el nombre de la empresa del cliente.
+     *
+     * @return El nombre de la empresa.
+     */
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    /**
+     * Obtiene la calle de la dirección del cliente.
+     *
+     * @return La calle del cliente.
+     */
+    public String getCalle() {
+        return calle;
+    }
+
+    /**
+     * Obtiene la ciudad de origen del cliente.
+     *
+     * @return La ciudad del cliente.
+     */
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    /**
      * Obtiene el nombre del contacto del cliente.
      *
      * @return El nombre del contacto.
