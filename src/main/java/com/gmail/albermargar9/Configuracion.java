@@ -6,10 +6,19 @@ import java.io.*;
  * Gestiona la configuración de la aplicación mediante un archivo binario.
  */
 public class Configuracion {
+    /** Ruta del archivo de configuración binaria del usuario. */
     private final String RUTA_ARCHIVO;
+
+    /** Ruta por defecto del fichero de clientes. */
     private String defaultLocation;
+
+    /** Carácter usado en el formato del menú. */
     private String menuCharacter;
+
+    /** Indicador de si el informe debe guardarse en un fichero. */
     private String saveReport;
+
+    /** Nombre del fichero de salida para los informes. */
     private String fileReport;
 
     public Configuracion() {
@@ -33,7 +42,9 @@ public class Configuracion {
      */
     private void cargarDesdeFichero() {
         File file = new File(RUTA_ARCHIVO);
-        if (!file.exists()) return;
+        if (!file.exists()) {
+            return;
+        }
 
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             while (dis.available() > 0) {
@@ -63,6 +74,12 @@ public class Configuracion {
         }
     }
 
+    /**
+     * Recupera el valor de una opción de configuración.
+     *
+     * @param clave clave de configuración.
+     * @return valor de configuración o {@code null} si la clave no existe.
+     */
     public String getValor(String clave) {
         switch (clave) {
             case "default_location":
@@ -78,6 +95,12 @@ public class Configuracion {
         }
     }
 
+    /**
+     * Actualiza el valor de una opción de configuración.
+     *
+     * @param clave clave de configuración.
+     * @param valor nuevo valor.
+     */
     public void setValor(String clave, String valor) {
         switch (clave) {
             case "default_location":

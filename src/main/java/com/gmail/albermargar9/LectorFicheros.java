@@ -10,40 +10,68 @@ import java.util.Scanner;
  */
 public class LectorFicheros {
 
+    /**
+     * Crea un {@link Scanner} para el fichero indicado.
+     *
+     * @param ruta ruta del fichero a leer.
+     * @return scanner para el fichero dado.
+     * @throws FileNotFoundException si no existe el fichero.
+     */
     public static Scanner lectorFicheroScanner(String ruta) throws FileNotFoundException {
         return new Scanner(new File(ruta));
     }
 
+    /**
+     * Crea un {@link FileReader} para el fichero indicado.
+     *
+     * @param ruta ruta del fichero a leer.
+     * @return lector de caracteres para el fichero dado.
+     * @throws FileNotFoundException si no existe el fichero.
+     */
     public static FileReader lectorFicheroFilereader(String ruta) throws FileNotFoundException {
         return new FileReader(ruta);
     }
 
+    /**
+     * Crea un {@link BufferedReader} para el fichero indicado.
+     *
+     * @param ruta ruta del fichero a leer.
+     * @return lector con búfer para el fichero dado.
+     * @throws FileNotFoundException si no existe el fichero.
+     */
     public static BufferedReader lectorFicheroBufferReader(String ruta) throws FileNotFoundException {
         return new BufferedReader(new FileReader(ruta));
     }
 
+    /**
+     * Convierte una línea del fichero en una instancia de {@link Cliente}.
+     *
+     * @param linea línea del fichero.
+     * @return cliente parseado o {@code null} si la línea no es válida.
+     */
     private static Cliente parseLinea(String linea) {
         if (linea == null || linea.trim().isEmpty()) {
             return null;
         }
         String[] datos = linea.split(";");
-        if (datos.length >= 11) { // Asegurarse de que hay suficientes columnas
-            try {
-                // Reemplazar la coma decimal por un punto
-                String facturacionStr = datos[4].replace(',', '.');
-                double facturacion = Double.parseDouble(facturacionStr);
-                String ciudad = datos[6];
-                String pais = datos[10];
-                return new Cliente(datos[0], datos[1], datos[2], ciudad, pais, facturacion);
-            } catch (NumberFormatException e) {
-                System.err.println("Error parseando facturación en línea: " + linea);
-            }
+        if (datos.length < 11) {
+            return null;
         }
-        return null;
+        try {
+            String facturacionStr = datos[4].replace(',', '.');
+            double facturacion = Double.parseDouble(facturacionStr);
+            String ciudad = datos[6];
+            String pais = datos[10];
+            return new Cliente(datos[0], datos[1], datos[2], ciudad, pais, facturacion);
+        } catch (NumberFormatException e) {
+            System.err.println("Error parseando facturación en línea: " + linea);
+            return null;
+        }
     }
 
     /**
      * Lee el archivo utilizando Scanner y parsea los clientes.
+     *
      * @param ruta Ruta del archivo a leer.
      * @return Lista de clientes generada.
      */
@@ -64,6 +92,7 @@ public class LectorFicheros {
 
     /**
      * Lee el archivo utilizando FileReader y parsea los clientes.
+     *
      * @param ruta Ruta del archivo a leer.
      * @return Lista de clientes generada.
      */
@@ -93,6 +122,7 @@ public class LectorFicheros {
 
     /**
      * Lee el archivo utilizando BufferedReader y parsea los clientes.
+     *
      * @param ruta Ruta del archivo a leer.
      * @return Lista de clientes generada.
      */

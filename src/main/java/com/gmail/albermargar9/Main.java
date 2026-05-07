@@ -14,15 +14,27 @@ import java.util.stream.Collectors;
  * Clase principal que ejecuta la aplicación de lectura e informes de clientes.
  */
 public class Main {
+    /** Configuración de la aplicación. */
     private static Configuracion config;
+
+    /** Lista de clientes cargados desde el fichero. */
     private static List<Cliente> listaClientes = new ArrayList<>();
+
+    /** Instancia de {@link Scanner} para la entrada estándar. */
     private static Scanner teclado = new Scanner(System.in);
+
+    /** Ruta del fichero de entrada en uso. */
     private static String rutaFicheroLectura;
 
+    /**
+     * Punto de entrada de la aplicación.
+     *
+     * @param args parámetros de la aplicación.
+     *             args[0] puede contener la ruta del fichero de datos.
+     */
     public static void main(String[] args) {
         config = new Configuracion();
 
-        // Si el programa recibe un parámetro, anula el default_location
         if (args.length > 0) {
             rutaFicheroLectura = args[0];
         } else {
@@ -72,6 +84,9 @@ public class Main {
         }
     }
 
+    /**
+     * Muestra el menú principal de opciones al usuario.
+     */
     private static void mostrarMenuPrincipal() {
         String c = config.getValor("menu_character");
         System.out.println("\n" + c.repeat(5) + " Menú principal " + c.repeat(5));
@@ -84,6 +99,9 @@ public class Main {
         System.out.print("Elija una opción: ");
     }
 
+    /**
+     * Gestiona el menú de generación de informes y las opciones de ordenación.
+     */
     private static void gestionarInformes() {
         if (listaClientes.isEmpty()) {
             System.out.println("No se puede generar ningún informe porque no se dispone de información de clientes.");
@@ -122,6 +140,12 @@ public class Main {
         }
     }
 
+    /**
+     * Genera y muestra o guarda un informe de clientes.
+     *
+     * @param clientes lista de clientes a incluir en el informe.
+     * @param titulo   título del informe.
+     */
     private static void emitirInforme(List<Cliente> clientes, String titulo) {
         boolean guardar = Boolean.parseBoolean(config.getValor("save_report"));
         String reporte = titulo + "\n" + "-".repeat(titulo.length()) + "\n";
@@ -143,6 +167,12 @@ public class Main {
         }
     }
 
+    /**
+     * Devuelve un nombre de fichero único para evitar sobrescribir archivos existentes.
+     *
+     * @param baseFilename nombre base deseado para el fichero.
+     * @return fichero disponible.
+     */
     private static File getUniqueFilename(String baseFilename) {
         File file = new File(baseFilename);
         if (!file.exists()) {
@@ -166,6 +196,9 @@ public class Main {
         return file;
     }
 
+    /**
+     * Muestra y gestiona el menú de configuración de la aplicación.
+     */
     private static void gestionarConfiguracion() {
         boolean salirMenuConfig = false;
         String[] claves = {"default_location", "menu_character", "save_report", "file_report"};
@@ -191,7 +224,6 @@ public class Main {
                     String nuevoValor = teclado.nextLine();
                     config.setValor(clave, nuevoValor);
 
-                    // Si cambian la ruta por defecto y no hay args[0], actualizamos la ruta en caliente
                     if (clave.equals("default_location")) {
                         rutaFicheroLectura = nuevoValor;
                     }
@@ -199,7 +231,6 @@ public class Main {
                     config.guardarEnFichero();
                     salirMenuConfig = true;
                 } else if (op == 6) {
-                    // Si no guardamos, podríamos recargar desde fichero para revertir los cambios en memoria.
                     config = new Configuracion();
                     rutaFicheroLectura = config.getValor("default_location");
                     salirMenuConfig = true;
