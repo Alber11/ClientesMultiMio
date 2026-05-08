@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -192,14 +193,14 @@ public class Main {
                 reporte.append("Id. Cliente: ").append(cl.getId()).append("\n");
                 reporte.append("Nombre Contacto: ").append(cl.getNombreContacto()).append("\n");
                 reporte.append("Antigüedad: ").append(cl.getAntiguedad()).append("\n");
-                reporte.append("Facturación: ").append(String.format("%.2f", cl.getFacturacion())).append("\n");
+                reporte.append("Facturación: ").append(String.format(Locale.GERMAN, "%,.2f", cl.getFacturacion())).append("\n");
                 reporte.append("Nombre Compania: ").append(cl.getNombreEmpresa()).append("\n");
                 reporte.append("Nombre Ciudad: ").append(cl.getCiudad()).append("\n\n");
                 facturacionTotal += cl.getFacturacion();
                 contador++;
             }
             reporte.append("Total de clientes en ").append(pais).append(": ").append(clientes.size()).append("\n");
-            reporte.append("Total de facturación en ").append(pais).append(": ").append(String.format("%.2f", facturacionTotal)).append("\n");
+            reporte.append("Total de facturación en ").append(pais).append(": ").append(String.format(Locale.GERMAN, "%,.2f", facturacionTotal)).append("\n");
         }
     }
 
