@@ -135,12 +135,10 @@ public class Main {
 
             switch (opcion) {
                 case "1":
-                    filtrados.sort(Comparator.comparing(Cliente::getFacturacion).reversed());
-                    emitirInforme(filtrados, "Informe por Facturación Descendente (España/Alemania)");
+                    emitirInformeAgrupado(filtrados, "Informe por Facturación Descendente (España/Alemania)", Comparator.comparing(Cliente::getFacturacion).reversed());
                     break;
                 case "2":
-                    filtrados.sort(Comparator.comparing(Cliente::getNombreContacto));
-                    emitirInforme(filtrados, "Informe por Contacto Ascendente (España/Alemania)");
+                    emitirInformeAgrupado(filtrados, "Informe por Contacto Ascendente (España/Alemania)", Comparator.comparing(Cliente::getNombreContacto));
                     break;
                 case "3":
                     volver = true;
@@ -151,35 +149,25 @@ public class Main {
         }
     }
 
-    /**
-     * Genera un informe con la lista de clientes proporcionada y lo guarda en un fichero o lo muestra en pantalla,
-     * según la configuración de {@code save_report}.
-     *
-     * @param clientes La lista de clientes a incluir en el informe.
-     * @param titulo   El título del informe.
-     */
-    private static void emitirInforme(List<Cliente> clientes, String titulo) {
+    private static void emitirInformeAgrupado(List<Cliente> clientes, String titulo, Comparator<Cliente> comparador) {
         boolean guardar = Boolean.parseBoolean(config.getValor("save_report"));
         StringBuilder reporte = new StringBuilder();
         reporte.append(titulo).append("\n").append("-".repeat(titulo.length())).append("\n");
 
-        double totalFacturacion = 0;
-        int contador = 1;
+        // Separar y ordenar clientes por país
+        List<Cliente> clientesEspana = clientes.stream()
+                .filter(c -> c.getPais().equalsIgnoreCase("España"))
+                .sorted(comparador)
+                .collect(Collectors.toList());
 
-        for (Cliente cl : clientes) {
-            reporte.append("Registro ").append(contador).append(" (").append(cl.getPais()).append(")\n");
-            reporte.append("Id. Cliente: ").append(cl.getId()).append("\n");
-            reporte.append("Nombre Contacto: ").append(cl.getNombreContacto()).append("\n");
-            reporte.append("Antigüedad: ").append(cl.getAntiguedad()).append("\n");
-            reporte.append("Facturación: ").append(String.format("%.2f", cl.getFacturacion())).append("\n");
-            reporte.append("Nombre Compania: ").append(cl.getNombreEmpresa()).append("\n");
-            reporte.append("Nombre Ciudad: ").append(cl.getCiudad()).append("\n\n");
-            totalFacturacion += cl.getFacturacion();
-            contador++;
-        }
+        List<Cliente> clientesAlemania = clientes.stream()
+                .filter(c -> c.getPais().equalsIgnoreCase("Alemania"))
+                .sorted(comparador)
+                .collect(Collectors.toList());
 
-        reporte.append("Total de clientes: ").append(clientes.size()).append("\n");
-        reporte.append("Total de facturación: ").append(String.format("%.2f", totalFacturacion)).append("\n");
+        // Generar reporte para cada país
+        appendCountryReport(reporte, clientesEspana, "España");
+        appendCountryReport(reporte, clientesAlemania, "Alemania");
 
         if (guardar) {
             File file = getUniqueFilename(config.getValor("file_report"));
@@ -191,6 +179,27 @@ public class Main {
             }
         } else {
             System.out.println(reporte.toString());
+        }
+    }
+
+    private static void appendCountryReport(StringBuilder reporte, List<Cliente> clientes, String pais) {
+        if (!clientes.isEmpty()) {
+            reporte.append("\n--- Clientes en ").append(pais).append(" ---\n");
+            double facturacionTotal = 0;
+            int contador = 1;
+            for (Cliente cl : clientes) {
+                reporte.append("Registro ").append(contador).append(" (").append(cl.getPais()).append(")\n");
+                reporte.append("Id. Cliente: ").append(cl.getId()).append("\n");
+                reporte.append("Nombre Contacto: ").append(cl.getNombreContacto()).append("\n");
+                reporte.append("Antigüedad: ").append(cl.getAntiguedad()).append("\n");
+                reporte.append("Facturación: ").append(String.format("%.2f", cl.getFacturacion())).append("\n");
+                reporte.append("Nombre Compania: ").append(cl.getNombreEmpresa()).append("\n");
+                reporte.append("Nombre Ciudad: ").append(cl.getCiudad()).append("\n\n");
+                facturacionTotal += cl.getFacturacion();
+                contador++;
+            }
+            reporte.append("Total de clientes en ").append(pais).append(": ").append(clientes.size()).append("\n");
+            reporte.append("Total de facturación en ").append(pais).append(": ").append(String.format("%.2f", facturacionTotal)).append("\n");
         }
     }
 
