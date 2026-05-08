@@ -28,7 +28,7 @@ public class Main {
     /**
      * Instancia de {@link Scanner} para leer la entrada del usuario desde la consola.
      */
-    private static Scanner teclado = new Scanner(System.in);
+    private static final Scanner teclado = new Scanner(System.in);
 
     /**
      * Ruta del fichero de datos de clientes que se está utilizando actualmente.
@@ -172,13 +172,13 @@ public class Main {
         if (guardar) {
             File file = getUniqueFilename(config.getValor("file_report"));
             try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-                pw.println(reporte.toString());
+                pw.println(reporte);
                 System.out.println("--> Informe guardado en: " + file.getAbsolutePath());
             } catch (IOException e) {
                 System.err.println("Error al guardar el informe: " + e.getMessage());
             }
         } else {
-            System.out.println(reporte.toString());
+            System.out.println(reporte);
         }
     }
 
